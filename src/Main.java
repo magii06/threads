@@ -2,13 +2,12 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.List;
 public class Main {
 
     public static void main(String[] args) {
-        PriorityBlockingQueue<Product> products= new PriorityBlockingQueue<>(100, new ProductCom());
+        PriorityBlockingQueue<Product> products= new PriorityBlockingQueue<>(10, new ProductCom());
 
         try {
             ProductThread t1 = new ProductThread("CKThread", "CK.txt", products);
@@ -27,10 +26,12 @@ public class Main {
                 thread.join();
             }
         }catch (Exception exception){
-            System.out.println("Thre was an error");
+            System.out.println("error");
             System.exit(1);
         }
-        File file= new File("result.txt");
+        ArrayList<Product> polledElements = new ArrayList<>();
+        products.drainTo(polledElements);
+        File file= new File("output.txt");
         if(file.exists()){
 
             System.out.println("File exists");
@@ -43,11 +44,9 @@ public class Main {
         }catch (FileNotFoundException e){
             e.printStackTrace();
         }
-
-        Iterator<Product> it=products.iterator();
-        while(it.hasNext()){
-            output.println(it.next()+" ");
-        }
+for(int i=0;i<10;i++){
+    output.println(polledElements.get(i) + " ");
+}
 
         output.close();
     }
